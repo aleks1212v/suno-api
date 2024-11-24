@@ -1,29 +1,21 @@
 import { NextResponse, NextRequest } from "next/server";
-//import { sunoApi } from "@/lib/SunoApi";
+import SunoApi from "@/lib/SunoApi";
 import { corsHeaders } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
-  if ((req.method === 'GET') && !(global.sunoApi.cook === 'empty')) {
+export async function POST(req: NextRequest) {
+  if (req.method === 'POST') {
     try {
-      const url = new URL(req.url);
-      const song_id = url.searchParams.get('song_id');
+	  //----------------------------
+	  const SUNO_COOKIE = req.headers.get('suno_cookie');
+	  
+	  global.sunoApi = new SunoApi(SUNO_COOKIE || '');
+	  global.sunoApi.init();
+	  console.log(sunoApi.cook);
+	  //----------------------------
 
-      if (!song_id) {
-        return new NextResponse(JSON.stringify({ error: 'Song ID is required' }), {
-          status: 400,
-          headers: {
-            'Content-Type': 'application/json',
-            ...corsHeaders
-          }
-        });
-      }
-
-      const lyricAlignment = await (await global.sunoApi).getLyricAlignment(song_id);
-
-
-      return new NextResponse(JSON.stringify(lyricAlignment), {
+      return new NextResponse(JSON.stringify("Completed"), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
@@ -31,7 +23,7 @@ export async function GET(req: NextRequest) {
         }
       });
     } catch (error) {
-      console.error('Error fetching lyric alignment:', error);
+      console.error('Error fetching limit:', error);
 
       return new NextResponse(JSON.stringify({ error: 'Internal server error. ' + error }), {
         status: 500,
@@ -44,7 +36,7 @@ export async function GET(req: NextRequest) {
   } else {
     return new NextResponse('Method Not Allowed', {
       headers: {
-        Allow: 'GET',
+        Allow: 'POST',
         ...corsHeaders
       },
       status: 405

@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { sunoApi } from '@/lib/SunoApi';
+//import { sunoApi } from '@/lib/SunoApi';
 import { corsHeaders } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
-  if (req.method === 'GET') {
+  if ((req.method === 'GET') && !(global.sunoApi.cook === 'empty')) {
     try {
       const url = new URL(req.url);
       const songIds = url.searchParams.get('ids');
@@ -14,9 +14,9 @@ export async function GET(req: NextRequest) {
       let audioInfo = [];
       if (songIds && songIds.length > 0) {
         const idsArray = songIds.split(',');
-        audioInfo = await (await sunoApi).get(idsArray, page);
+        audioInfo = await (await global.sunoApi).get(idsArray, page);
       } else {
-        audioInfo = await (await sunoApi).get(undefined, page);
+        audioInfo = await (await global.sunoApi).get(undefined, page);
       }
 
       return new NextResponse(JSON.stringify(audioInfo), {

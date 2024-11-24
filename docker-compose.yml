@@ -4,8 +4,6 @@ services:
   suno-api:
     build:
       context: .
-      args:
-        SUNO_COOKIE: ${SUNO_COOKIE}
     volumes:
       - ./public:/app/public
     ports:

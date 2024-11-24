@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
-import { sunoApi } from "@/lib/SunoApi";
+//import { sunoApi } from "@/lib/SunoApi";
 import { corsHeaders } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  if (req.method === 'GET') {
+  if ((req.method === 'GET') && !(global.sunoApi.cook === 'empty')) {
     try {
       const url = new URL(req.url);
       const clipId = url.searchParams.get('id');
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      const audioInfo = await (await sunoApi).getClip(clipId);
+      const audioInfo = await (await global.sunoApi).getClip(clipId);
 
       return new NextResponse(JSON.stringify(audioInfo), {
         status: 200,

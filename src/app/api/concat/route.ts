@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
-import { sunoApi } from "@/lib/SunoApi";
+//import { sunoApi } from "@/lib/SunoApi";
 import { corsHeaders } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  if (req.method === 'POST') {
+  if ((req.method === 'POST') && !(global.sunoApi.cook === 'empty')) {
     try {
       const body = await req.json();
       const { clip_id } = body;
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
           }
         });
       }
-      const audioInfo = await (await sunoApi).concatenate(clip_id);
+      const audioInfo = await (await global.sunoApi).concatenate(clip_id);
       return new NextResponse(JSON.stringify(audioInfo), {
         status: 200,
         headers: {
